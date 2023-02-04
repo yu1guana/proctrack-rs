@@ -2,7 +2,7 @@
 
 This is a tool to make debugging Rust programs easier.
 
-In this repository, there are four crate.
+In this repository, there are four crates.
 
 - [proctrack](proctrack)
   - This crate has a main program and export the other crates.
@@ -17,7 +17,20 @@ In this repository, there are four crate.
 
 # Usage
 
-Example of main.rs and its stderr is as follows.
+## Binary
+
+Under construction.
+
+## Library
+
+Add a dependency to Cargo.toml as follows.
+
+```toml
+[dependencies]
+proctrack = {git = "https://github.com/yu1guana/proctrack-rs.git"}
+```
+
+Example of main.rs and its stderr are as follows.
 
 ```rust
 use proctrack::funclog::{funclog, methodlog, methodlog_move, methodlog_static};
@@ -28,7 +41,7 @@ fn hello() {
     println!("Hello.");
 }
 
-#[derive(TypeName)]
+#[derive(Debug, TypeName)]
 struct A {
     a: i64,
 }
@@ -38,7 +51,7 @@ impl A {
     fn new(a: i64) -> Self {
         Self { a }
     }
-    #[methodlog]
+    #[methodlog(self)]
     fn add(&mut self, b: i64) {
         self.a += b;
     }
@@ -62,6 +75,8 @@ fn main() {
 [DEBUG:func_enter(main.rs:15)] A::new
 [DEBUG:func_exit(main.rs:15)] A::new
 [DEBUG:func_enter(main.rs:19)] A::add
+[DEBUG:value(proctrack/examples/funclog.rs:19)] self = A { a: 10 }
+[DEBUG:value(proctrack/examples/funclog.rs:19)] self = A { a: 12 }
 [DEBUG:func_exit(main.rs:19)] A::add
 [DEBUG:func_enter(main.rs:23)] A::take
 [DEBUG:func_exit(main.rs:23)] A::take

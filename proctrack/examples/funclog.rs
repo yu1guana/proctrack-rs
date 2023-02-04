@@ -6,7 +6,7 @@ fn hello() {
     println!("Hello.");
 }
 
-#[derive(TypeName)]
+#[derive(Debug, TypeName)]
 struct A {
     a: i64,
 }
@@ -16,7 +16,7 @@ impl A {
     fn new(a: i64) -> Self {
         Self { a }
     }
-    #[methodlog]
+    #[methodlog(self)]
     fn add(&mut self, b: i64) {
         self.a += b;
     }
