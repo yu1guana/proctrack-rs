@@ -1,0 +1,13 @@
+[profile.release]
+lto = true
+strip = true
+panic = 'abort'
+codegen-units = 1
+
+[workspace]
+members = [
+  "funclog",
+  "proctrack",
+  "typename",
+  "typename_derive",
+]

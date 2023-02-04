@@ -1,0 +1,22 @@
+[package]
+name = "typename_derive"
+authors = ["Yuichi Ishida <yu1guana@gmail.com>"]
+version = "0.1.0"
+description = "Derive macro to implement the trait `TypeName` in the typename crate."
+repository = "https://github.com/yu1guana/proctrack-rs.git"
+license-file = "../LICENSE"
+readme = "../README.md"
+edition = "2021"
+publish = false
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+proc-macro = true
+
+[dependencies]
+syn = {version = "1.0", features = ["full"]}
+quote = "1.0"
+
+[features]
+under_proctrack = []

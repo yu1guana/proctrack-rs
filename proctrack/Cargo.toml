@@ -1,0 +1,21 @@
+[package]
+name = "proctrack"
+authors = ["Yuichi Ishida <yu1guana@gmail.com>"]
+version = "0.1.0"
+description = "Tool to make debugging Rust programs easier."
+repository = "https://github.com/yu1guana/proctrack-rs.git"
+license-file = "../LICENSE"
+readme = "../README.md"
+edition = "2021"
+publish = false
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+funclog = {path = "../funclog", features = ["under_proctrack"]}
+typename = {path = "../typename"}
+typename_derive = {path = "../typename_derive", features = ["under_proctrack"]}
+
+[features]
+default = []
+disable = ["funclog/disable"]
