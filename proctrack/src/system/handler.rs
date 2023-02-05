@@ -159,12 +159,12 @@ pub fn handle_key_events(key_event: KeyEvent, app: &mut App) -> Result<()> {
 pub fn guidance_string(app_mode: AppMode) -> String {
     match app_mode {
         AppMode::ViewDebug => format!(
-            " Quit [q, Esc, Ctrl-c], Up/Down [{}/{}], Open Visibility Editor [v]",
+            " Quit [q, Esc, Ctrl-c], Up/Down [{}/{}], Reload Debug Info File [r], Open Visibility Editor [v]",
             keybinding::UP,
             keybinding::DOWN
         ),
         AppMode::EditVisibility => format!(
-            " Quit [q, Esc, Ctrl-c], Up/Down [{}/{}], Close Visibility Editor [v], Change Editor Visibility[Enter], Search [Ctrl-f]",
+            " Quit [q, Esc, Ctrl-c], Up/Down [{}/{}], Reload Debug Info File [r], Close Visibility Editor [v], Change Editor Visibility[Enter], Search [Ctrl-f]",
             keybinding::UP,
             keybinding::DOWN
         ),
@@ -174,15 +174,16 @@ pub fn guidance_string(app_mode: AppMode) -> String {
 
 #[cfg(not(feature = "alternative_keybinding"))]
 mod keybinding {
-    pub const UP: char = 'i';
-    pub const DOWN: char = 'k';
-    // const LEFT: char = 'l';
-    // const RIGHT: char = 'j';
-}
-#[cfg(feature = "alternative_keybinding")]
-mod keybinding {
     pub const UP: char = 'k';
     pub const DOWN: char = 'j';
     // const LEFT: char = 'h';
     // const RIGHT: char = 'l';
+}
+
+#[cfg(feature = "alternative_keybinding")]
+mod keybinding {
+    pub const UP: char = 'i';
+    pub const DOWN: char = 'k';
+    // const LEFT: char = 'l';
+    // const RIGHT: char = 'j';
 }

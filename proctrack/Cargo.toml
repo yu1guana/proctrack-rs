@@ -28,3 +28,4 @@ typename_derive = {path = "../typename_derive", features = ["under_proctrack"]}
 [features]
 default = []
 disable = ["funclog/disable"]
+alternative_keybinding = []

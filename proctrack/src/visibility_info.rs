@@ -4,7 +4,7 @@
 // see https://opensource.org/licenses/mit-license.php
 
 use anyhow::{bail, Context, Result};
-use proctrack::funclog::{methodlog, methodlog_move, methodlog_static};
+use proctrack::funclog::methodlog;
 use proctrack::typename_derive::TypeName;
 use serde_derive::{Deserialize, Serialize};
 use std::cmp::{Ord, Ordering, PartialOrd};
