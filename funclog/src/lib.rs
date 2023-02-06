@@ -28,7 +28,7 @@ pub fn funclog(args: TokenStream, item: TokenStream) -> TokenStream {
             eprintln!("[DEBUG:func_enter({}:{})] {}", file!(), line!(), stringify!(#func_name));
             #value_check_block;
 
-            let func_body_closure = || #func_body;
+            let mut func_body_closure = || #func_body;
             let ret = func_body_closure();
 
             #value_check_block;
@@ -124,7 +124,7 @@ pub fn methodlog_move(args: TokenStream, item: TokenStream) -> TokenStream {
                 eprintln!("[DEBUG:func_enter({}:{})] {}::{}", file!(), line!(), typename, stringify!(#func_name));
                 #value_check_block;
 
-                let func_body_closure = || #func_body;
+                let mut func_body_closure = || #func_body;
                 let ret = func_body_closure();
 
                 #value_check_block;
@@ -143,7 +143,7 @@ pub fn methodlog_move(args: TokenStream, item: TokenStream) -> TokenStream {
                 eprintln!("[DEBUG:func_enter({}:{})] {}::{}", file!(), line!(), typename, stringify!(#func_name));
                 #value_check_block;
 
-                let func_body_closure = || #func_body;
+                let mut func_body_closure = || #func_body;
                 let ret = func_body_closure();
 
                 #value_check_block;
@@ -182,7 +182,7 @@ pub fn methodlog_static(args: TokenStream, item: TokenStream) -> TokenStream {
                 eprintln!("[DEBUG:func_enter({}:{})] {}::{}", file!(), line!(), <Self as TypeName>::type_name_static(), stringify!(#func_name));
                 #value_check_block;
 
-                let func_body_closure = || #func_body;
+                let mut func_body_closure = || #func_body;
                 let ret = func_body_closure();
 
                 #value_check_block;
@@ -199,7 +199,7 @@ pub fn methodlog_static(args: TokenStream, item: TokenStream) -> TokenStream {
                 eprintln!("[DEBUG:func_enter({}:{})] {}::{}", file!(), line!(), <Self as TypeName>::type_name_static(), stringify!(#func_name));
                 #value_check_block;
 
-                let func_body_closure = || #func_body;
+                let mut func_body_closure = || #func_body;
                 let ret = func_body_closure();
 
                 #value_check_block;
