@@ -6,20 +6,46 @@ In this repository, there are four crates.
 
 - [proctrack](proctrack)
   - This crate has a main program and export the other crates.
-	  Logs are printed only when you building without the `disable` feature in debug mode.
+    Logs are printed only when you building without the `disable` feature in debug mode.
 - [typename](typename)
-	- This crate defines the trait `TypeName` to get names of structs.
+  - This crate defines the trait `TypeName` to get names of structs.
 - [typename\_derive](typename_derive)
-	- This crate defines a derive macro to implement the trait `TypeName` in the typename crate.
+  - This crate defines a derive macro to implement the trait `TypeName` in the typename crate.
 - [func\_log](funclog)
-	- This crate defines attribute macros to print logs of entering and exiting functions, and changing of variables in functions into stderr.
-	  Logs are printed only when you building without the `disable` feature in debug mode.
+  - This crate defines attribute macros to print logs of entering and exiting functions, and changing of variables in functions into stderr.
+    Logs are printed only when you building without the `disable` feature in debug mode.
+
+# Installation
+
+```sh
+cargo install --git https://github.com/yu1guana/proctrack-rs
+```
+
+If you want to use the alternate key bindings, excute the following commands.
+
+```sh
+cargo install --git https://github.com/yu1guana/proctrack-rs --features alternative_keybinding
+```
 
 # Usage
 
 ## Binary
 
-Under construction.
+```text
+Tool to make debugging Rust programs easier.
+
+Usage: proctrack <DEBUG_INFO> <VISIBILITY_INFO>
+
+Arguments:
+  <DEBUG_INFO>       Debug information written by using proctrack crate.
+  <VISIBILITY_INFO>  TOML file which saves visibility information. If this file does not exsist, a new file is created.
+
+Options:
+  -h, --help     Print help
+  -V, --version  Print version
+
+Repository: https://github.com/yu1guana/proctrack-rs.git
+```
 
 ## Library
 
