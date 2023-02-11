@@ -3,7 +3,7 @@
 // Released under the MIT license.
 // see https://opensource.org/licenses/mit-license.php
 
-use super::handler::guidance_string;
+use super::handler::set_guidance;
 use crate::visibility_info::VisibilityInfo;
 use anyhow::Result;
 use regex::Regex;
@@ -15,7 +15,7 @@ use tui::layout::{Constraint, Direction, Layout, Rect};
 use tui::style::{Color, Style};
 use tui::terminal::Frame;
 use tui::text::{Span, Spans};
-use tui::widgets::{Block, Borders, Cell, Paragraph, Row, Table, TableState, Wrap};
+use tui::widgets::{Block, Borders, Cell, Paragraph, Row, Table, TableState};
 
 #[derive(Debug, Clone, Copy, Eq, PartialEq)]
 pub enum AppMode {
@@ -58,10 +58,10 @@ impl App {
         debug_info: String,
         visibility_info: VisibilityInfo,
     ) -> Self {
-        Self {
+        let mut app = Self {
             running: true,
             mode: AppMode::ViewDebug,
-            guidance: guidance_string(AppMode::ViewDebug),
+            guidance: String::new(),
             search_string: String::new(),
             search_regex: Regex::new("").unwrap(),
             search_regex_error: String::new(),
@@ -74,7 +74,9 @@ impl App {
             debug_info,
             visibility_info,
             string_buffer: String::new(),
-        }
+        };
+        set_guidance(app.mode, &mut app.guidance);
+        app
     }
 
     /// Handles the tick event of the terminal.
@@ -84,7 +86,7 @@ impl App {
 
     /// Renders the user interface widgets.
     pub fn render<B: Backend>(&mut self, frame: &mut Frame<'_, B>) {
-        let guidance_height = 3 + (self.guidance.len() / frame.size().width as usize) as u16;
+        let guidance_height = 4;
         let search_box_height = 3;
         let visibility_info_width = match self.mode {
             AppMode::ViewDebug => 0,
@@ -134,16 +136,15 @@ impl App {
 
     fn render_guidance<B: Backend>(&self, frame: &mut Frame<B>, chunk: Rect) {
         frame.render_widget(
-            Paragraph::new(self.guidance.as_ref())
-                .block(Block::default().borders(Borders::ALL))
-                .wrap(Wrap { trim: false }),
+            Paragraph::new(self.guidance.as_ref()).block(Block::default().borders(Borders::ALL)),
             chunk,
         );
     }
 
     fn render_debug_info<B: Backend>(&mut self, frame: &mut Frame<B>, chunk: Rect) {
         macro_rules! write_depth_representation {
-            ($string_buffer:expr, $depth:expr) => {
+            ($string_buffer:expr,$line_number:expr, $depth:expr) => {
+                write!($string_buffer, "{:>3} ", $line_number).unwrap();
                 for _ in 0..$depth {
                     write!($string_buffer, "| ").unwrap();
                 }
@@ -153,6 +154,7 @@ impl App {
         let mut display = true;
         let mut depth = 0;
         let mut display_depth = depth;
+        let mut displayed_line_number = 0;
         for line in self.debug_info.lines() {
             if line.starts_with("[DEBUG:func_enter") {
                 let func_name = line.split_ascii_whitespace().last().unwrap();
@@ -166,8 +168,13 @@ impl App {
                     display_depth = depth
                 }
                 if display {
+                    displayed_line_number += 1;
                     self.string_buffer.clear();
-                    write_depth_representation!(&mut self.string_buffer, depth);
+                    write_depth_representation!(
+                        &mut self.string_buffer,
+                        displayed_line_number,
+                        depth
+                    );
                     displayed_debug_info.push(Spans::from(vec![
                         Span::raw(" "),
                         Span::styled(
@@ -184,8 +191,9 @@ impl App {
                     display = true;
                 }
             } else if display && line.starts_with("[DEBUG:value") {
+                displayed_line_number += 1;
                 self.string_buffer.clear();
-                write_depth_representation!(&mut self.string_buffer, depth);
+                write_depth_representation!(&mut self.string_buffer, displayed_line_number, depth);
                 displayed_debug_info.push(Spans::from(vec![
                     Span::raw(" "),
                     Span::styled(
@@ -282,7 +290,7 @@ impl App {
         );
     }
 
-    fn num_displayed_debug_info_lines(&self) -> u16 {
+    fn num_displayed_debug_info_lines(&self) -> usize {
         let mut count = 0;
         let mut display = true;
         let mut depth = 0;
@@ -337,10 +345,12 @@ impl App {
             entry.visibility ^= true;
         }
         self.visibility_hash_map = self.visibility_info.clone().into();
+        self.scroll = (0, 0);
     }
 
-    pub fn update_guidance(&mut self) {
-        self.guidance = guidance_string(self.mode);
+    pub fn mode_change(&mut self, mode: AppMode) {
+        self.mode = mode;
+        set_guidance(self.mode, &mut self.guidance);
     }
 
     pub fn update_search_regex(&mut self) {
@@ -357,27 +367,38 @@ impl App {
         }
     }
 
-    pub fn scroll_up(&mut self) {
-        if self.scroll.0 != 0 {
-            self.scroll.0 -= 1;
+    pub fn scroll_up(&mut self, n: u16) {
+        if self.scroll.0 < n {
+            self.scroll.0 = 0;
+        } else {
+            self.scroll.0 -= n;
         }
     }
 
-    pub fn scroll_down(&mut self) {
-        if self.scroll.0 < self.num_displayed_debug_info_lines() - 1 {
-            self.scroll.0 += 1;
+    pub fn scroll_down(&mut self, n: u16) {
+        let num_displayed_debug_info_lines = self.num_displayed_debug_info_lines();
+        if ((self.scroll.0 + n) as usize) < num_displayed_debug_info_lines - 1 {
+            self.scroll.0 += n;
+        } else {
+            self.scroll.0 =
+                std::cmp::min(num_displayed_debug_info_lines - 1, u16::MAX as usize) as u16;
         }
     }
 
-    pub fn idx_visibility_up(&mut self) {
-        if self.idx_visibility != 0 {
-            self.idx_visibility -= 1;
+    pub fn idx_visibility_prev(&mut self, n: usize) {
+        if self.idx_visibility < n {
+            self.idx_visibility = 0;
+        } else {
+            self.idx_visibility -= n;
         }
     }
 
-    pub fn idx_visibility_down(&mut self) {
-        if self.idx_visibility < self.num_displayed_visibility_entries() - 1 {
-            self.idx_visibility += 1;
+    pub fn idx_visibility_next(&mut self, n: usize) {
+        let num_displayed_visibility_entries = self.num_displayed_visibility_entries();
+        if self.idx_visibility + n < num_displayed_visibility_entries - 1 {
+            self.idx_visibility += n;
+        } else {
+            self.idx_visibility = num_displayed_visibility_entries - 1;
         }
     }
 }
