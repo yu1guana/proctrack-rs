@@ -177,16 +177,16 @@ pub fn methodlog_static(args: TokenStream, item: TokenStream) -> TokenStream {
         #[cfg(feature = "under_proctrack")]
         {
             block = parse_quote! {{
-                use ::proctrack::typename::TypeName;
+                use ::proctrack::typename::TypeNameStatic;
 
-                eprintln!("[DEBUG:func_enter({}:{})] {}::{}", file!(), line!(), <Self as TypeName>::type_name_static(), stringify!(#func_name));
+                eprintln!("[DEBUG:func_enter({}:{})] {}::{}", file!(), line!(), <Self as TypeNameStatic>::type_name_static(), stringify!(#func_name));
                 #value_check_block;
 
                 let mut func_body_closure = || #func_body;
                 let ret = func_body_closure();
 
                 #value_check_block;
-                eprintln!("[DEBUG:func_exit({}:{})] {}::{}", file!(), line!(), <Self as TypeName>::type_name_static(), stringify!(#func_name));
+                eprintln!("[DEBUG:func_exit({}:{})] {}::{}", file!(), line!(), <Self as TypeNameStatic>::type_name_static(), stringify!(#func_name));
 
                 ret
             }};
@@ -194,16 +194,16 @@ pub fn methodlog_static(args: TokenStream, item: TokenStream) -> TokenStream {
         #[cfg(not(feature = "under_proctrack"))]
         {
             block = parse_quote! {{
-                use ::typename::TypeName;
+                use ::typename::TypeNameStatic;
 
-                eprintln!("[DEBUG:func_enter({}:{})] {}::{}", file!(), line!(), <Self as TypeName>::type_name_static(), stringify!(#func_name));
+                eprintln!("[DEBUG:func_enter({}:{})] {}::{}", file!(), line!(), <Self as TypeNameStatic>::type_name_static(), stringify!(#func_name));
                 #value_check_block;
 
                 let mut func_body_closure = || #func_body;
                 let ret = func_body_closure();
 
                 #value_check_block;
-                eprintln!("[DEBUG:func_exit({}:{})] {}::{}", file!(), line!(), <Self as TypeName>::type_name_static(), stringify!(#func_name));
+                eprintln!("[DEBUG:func_exit({}:{})] {}::{}", file!(), line!(), <Self as TypeNameStatic>::type_name_static(), stringify!(#func_name));
 
                 ret
             }};

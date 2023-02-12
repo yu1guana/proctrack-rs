@@ -19,9 +19,6 @@ pub fn derive_typename(input: TokenStream) -> TokenStream {
             fn type_name(&self) -> &str{
                 stringify!(#name)
             }
-            fn type_name_static() -> &'static str{
-                stringify!(#name)
-            }
         }
     };
 
@@ -31,6 +28,30 @@ pub fn derive_typename(input: TokenStream) -> TokenStream {
             fn type_name(&self) -> &str{
                 stringify!(#name)
             }
+        }
+    };
+
+    gen.into()
+}
+
+#[proc_macro_derive(TypeNameStatic)]
+pub fn derive_typename_static(input: TokenStream) -> TokenStream {
+    let ast = parse_macro_input!(input as DeriveInput);
+    let name = &ast.ident;
+    let (impl_generics, ty_generics, where_clause) = ast.generics.split_for_impl();
+
+    #[cfg(feature = "under_proctrack")]
+    let gen = quote! {
+        impl #impl_generics ::proctrack::typename::TypeNameStatic for #name #ty_generics #where_clause {
+            fn type_name_static() -> &'static str{
+                stringify!(#name)
+            }
+        }
+    };
+
+    #[cfg(not(feature = "under_proctrack"))]
+    let gen = quote! {
+        impl #impl_generics ::typename::TypeNameStatic for #name #ty_generics #where_clause {
             fn type_name_static() -> &'static str{
                 stringify!(#name)
             }

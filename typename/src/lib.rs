@@ -5,5 +5,8 @@
 
 pub trait TypeName {
     fn type_name(&self) -> &str;
+}
+
+pub trait TypeNameStatic {
     fn type_name_static() -> &'static str;
 }

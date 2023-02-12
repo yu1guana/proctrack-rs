@@ -1,12 +1,12 @@
 use proctrack::funclog::{funclog, methodlog, methodlog_move, methodlog_static};
-use proctrack::typename_derive::TypeName;
+use proctrack::typename_derive::{TypeName, TypeNameStatic};
 
 #[funclog]
 fn hello() {
     println!("Hello.");
 }
 
-#[derive(Debug, TypeName)]
+#[derive(Debug, TypeName, TypeNameStatic)]
 struct A {
     a: i64,
 }

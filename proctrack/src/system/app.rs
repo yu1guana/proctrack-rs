@@ -202,7 +202,7 @@ impl App {
                     ),
                     Span::styled(
                         format!("{}", self.regex_value_line.replace(line, ""),),
-                        Style::default().fg(Color::Gray),
+                        Style::default().fg(Color::Cyan),
                     ),
                 ]));
             }

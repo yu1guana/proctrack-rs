@@ -10,7 +10,7 @@ use self::visibility_info::VisibilityInfo;
 use anyhow::{Context, Result};
 use clap::{Parser, ValueHint};
 use proctrack::funclog::{funclog, methodlog_static};
-use proctrack::typename_derive::TypeName;
+use proctrack::typename_derive::{TypeName, TypeNameStatic};
 use std::fs;
 use std::path::PathBuf;
 
@@ -18,7 +18,7 @@ use std::path::PathBuf;
 fn main() -> Result<()> {
     Cli::run()
 }
-#[derive(Parser, TypeName)]
+#[derive(Parser, TypeName, TypeNameStatic)]
 #[clap(author, version, about, after_help = concat!("Repository: ", env!("CARGO_PKG_REPOSITORY")))]
 pub(crate) struct Cli {
     #[clap(
